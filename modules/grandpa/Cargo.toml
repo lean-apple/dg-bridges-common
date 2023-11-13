@@ -30,7 +30,7 @@ sp-trie = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master
 
 # Optional Benchmarking Dependencies
 bp-test-utils = { path = "../../primitives/test-utils", default-features = false, optional = true }
-frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false, optional = true }
+frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false, optional = false }
 
 [dev-dependencies]
 sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }

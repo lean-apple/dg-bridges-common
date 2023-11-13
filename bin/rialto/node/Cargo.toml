@@ -1,0 +1,52 @@
+[package]
+name = "rialto-bridge-node"
+description = "Substrate node compatible with Rialto runtime"
+version = "0.1.0"
+authors = ["Parity Technologies <admin@parity.io>"]
+edition = "2021"
+build = "build.rs"
+repository = "https://github.com/paritytech/parity-bridges-common/"
+license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
+
+[dependencies]
+clap = { version = "4.3.19", features = ["derive"] }
+serde_json = "1.0.104"
+
+# Bridge dependencies
+
+bp-messages = { path = "../../../primitives/messages" }
+bridge-runtime-common = { path = "../../runtime-common" }
+rialto-runtime = { path = "../runtime" }
+
+# Substrate Dependencies
+
+sp-consensus-beefy = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+frame-benchmarking-cli = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+frame-support = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+node-inspect = { package = "staging-node-inspect", git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sc-cli = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master"}
+sc-executor = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sc-service = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-authority-discovery = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-consensus-babe = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-consensus-grandpa = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+
+# Polkadot Dependencies
+polkadot-node-core-pvf = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+polkadot-primitives = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+polkadot-runtime-parachains = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+polkadot-service = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+
+[build-dependencies]
+substrate-build-script-utils = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+frame-benchmarking-cli = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+
+[features]
+default = []
+runtime-benchmarks = [
+	"polkadot-service/runtime-benchmarks",
+	"rialto-runtime/runtime-benchmarks",
+]

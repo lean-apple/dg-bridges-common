@@ -17,7 +17,7 @@ bp-xcm-bridge-hub = { path = "../../primitives/xcm-bridge-hub", default-features
 
 # Substrate Dependencies
 
-frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false, optional = true }
+frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false, optional = false }
 frame-support = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 frame-system = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }

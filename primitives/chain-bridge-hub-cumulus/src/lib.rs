@@ -26,9 +26,11 @@ pub use bp_polkadot_core::{
 };
 
 use bp_messages::*;
-use bp_polkadot_core::SuffixedCommonSignedExtension;
+// use bp_polkadot_core::SuffixedCommonSignedExtension;
 use bp_runtime::extensions::{
-	BridgeRejectObsoleteHeadersAndMessages, RefundBridgedParachainMessagesSchema,
+	BridgeRejectObsoleteHeadersAndMessages, ChargeTransactionPayment, CheckEra, CheckGenesis,
+	CheckNonZeroSender, CheckNonce, CheckSpecVersion, CheckTxVersion, CheckWeight,
+	GenericSignedExtension, RefundBridgedParachainMessagesSchema,
 };
 use frame_support::{
 	dispatch::DispatchClass,
@@ -134,7 +136,92 @@ pub const MAX_UNREWARDED_RELAYERS_IN_CONFIRMATION_TX: MessageNonce = 1024;
 pub const MAX_UNCONFIRMED_MESSAGES_IN_CONFIRMATION_TX: MessageNonce = 4096;
 
 /// Signed extension that is used by all bridge hubs.
-pub type SignedExtension = SuffixedCommonSignedExtension<(
+// pub type SignedExtension = SuffixedCommonSignedExtension<(
+// 	BridgeRejectObsoleteHeadersAndMessages,
+// 	RefundBridgedParachainMessagesSchema,
+// )>;
+/// Extra signed extension data that is used by all bridge hubs.
+pub type SignedExtra = (
+	CheckNonZeroSender,
+	CheckSpecVersion,
+	CheckTxVersion,
+	CheckGenesis<Hash>,
+	CheckEra<Hash>,
+	CheckNonce<Nonce>,
+	CheckWeight,
+	ChargeTransactionPayment<Balance>,
 	BridgeRejectObsoleteHeadersAndMessages,
 	RefundBridgedParachainMessagesSchema,
-)>;
+);
+
+/// Signed extension that is used by all bridge hubs.
+pub type SignedExtension = GenericSignedExtension<SignedExtra>;
+
+/// Helper trait to define some extra methods on bridge hubs signed extension (and
+/// overcome Rust limitations).
+pub trait BridgeHubSignedExtension {
+	/// Create signed extension from its components.
+	fn from_params(
+		spec_version: u32,
+		transaction_version: u32,
+		era: bp_runtime::TransactionEra<BlockNumber, Hash>,
+		genesis_hash: Hash,
+		nonce: Nonce,
+		tip: Balance,
+	) -> Self;
+
+	/// Return transaction nonce.
+	fn nonce(&self) -> Nonce;
+
+	/// Return transaction tip.
+	fn tip(&self) -> Balance;
+}
+
+impl BridgeHubSignedExtension for SignedExtension {
+	/// Create signed extension from its components.
+	fn from_params(
+		spec_version: u32,
+		transaction_version: u32,
+		era: bp_runtime::TransactionEra<BlockNumber, Hash>,
+		genesis_hash: Hash,
+		nonce: Nonce,
+		tip: Balance,
+	) -> Self {
+		GenericSignedExtension::new(
+			(
+				(),              // non-zero sender
+				(),              // spec version
+				(),              // tx version
+				(),              // genesis
+				era.frame_era(), // era
+				nonce.into(),    // nonce (compact encoding)
+				(),              // Check weight
+				tip.into(),      // transaction payment / tip (compact encoding)
+				(),              // bridge reject obsolete headers and msgs
+				(),              // bridge reward to relayer for message passing
+			),
+			Some((
+				(),
+				spec_version,
+				transaction_version,
+				genesis_hash,
+				era.signed_payload(genesis_hash),
+				(),
+				(),
+				(),
+				(),
+				(),
+			)),
+		)
+	}
+
+	/// Return transaction nonce.
+	fn nonce(&self) -> Nonce {
+		self.payload.5 .0
+	}
+
+	/// Return transaction tip.
+	fn tip(&self) -> Balance {
+		self.payload.7 .0
+	}
+}

@@ -64,7 +64,7 @@ use bp_messages::{
 	MessagePayload, MessagesOperatingMode, OutboundLaneData, OutboundMessageDetails,
 	UnrewardedRelayersState, VerificationError,
 };
-use bp_runtime::{
+use bp_runtime::{ChainId,
 	AccountIdOf, BasicOperatingMode, HashOf, OwnedBridgeModule, PreComputedSize, RangeInclusiveExt,
 	Size,
 };
@@ -133,6 +133,27 @@ pub mod pallet {
 
 		/// Message dispatch handler.
 		type MessageDispatch: MessageDispatch<DispatchPayload = Self::InboundPayload>;
+
+		/// Gets the chain id value from the instance.
+		#[pallet::constant]
+		type BridgedChainId: Get<ChainId>;
+
+		type MaxUnrewardedRelayerEntriesAtInboundLane: Get<MessageNonce>;
+		/// Maximal number of unconfirmed messages at inbound lane. Unconfirmed means that the
+		/// message has been delivered, but either confirmations haven't been delivered back to the
+		/// source chain, or we haven't received reward confirmations for these messages yet.
+		///
+		/// This constant limits difference between last message from last entry of the
+		/// `InboundLaneData::relayers` and first message at the first entry.
+		///
+		/// There is no point of making this parameter lesser than
+		/// MaxUnrewardedRelayerEntriesAtInboundLane, because then maximal number of relayer entries
+		/// will be limited by maximal number of messages.
+		///
+		/// This value also represents maximal number of messages in single delivery transaction.
+		/// Transaction that is declaring more messages than this value, will be rejected. Even if
+		/// these messages are from different lanes.
+		type MaxUnconfirmedMessagesAtInboundLane: Get<MessageNonce>;
 	}
 
 	/// Shortcut to this chain type for Config.
@@ -210,8 +231,8 @@ pub mod pallet {
 
 			// reject transactions that are declaring too many messages
 			ensure!(
-				MessageNonce::from(messages_count) <=
-					BridgedChainOf::<T, I>::MAX_UNCONFIRMED_MESSAGES_IN_CONFIRMATION_TX,
+				MessageNonce::from(messages_count)
+					<= BridgedChainOf::<T, I>::MAX_UNCONFIRMED_MESSAGES_IN_CONFIRMATION_TX,
 				Error::<T, I>::TooManyMessagesInTheProof
 			);
 
@@ -313,9 +334,9 @@ pub mod pallet {
 						valid_messages += 1;
 						dispatch_result.unspent_weight
 					},
-					ReceivalResult::InvalidNonce |
-					ReceivalResult::TooManyUnrewardedRelayers |
-					ReceivalResult::TooManyUnconfirmedMessages => message_dispatch_weight,
+					ReceivalResult::InvalidNonce
+					| ReceivalResult::TooManyUnrewardedRelayers
+					| ReceivalResult::TooManyUnconfirmedMessages => message_dispatch_weight,
 				};
 				messages_received_status.push(message.key.nonce, receival_result);
 
@@ -655,10 +676,10 @@ fn send_message<T: Config<I>, I: 'static>(
 
 /// Ensure that the pallet is in normal operational mode.
 fn ensure_normal_operating_mode<T: Config<I>, I: 'static>() -> Result<(), Error<T, I>> {
-	if PalletOperatingMode::<T, I>::get() ==
-		MessagesOperatingMode::Basic(BasicOperatingMode::Normal)
+	if PalletOperatingMode::<T, I>::get()
+		== MessagesOperatingMode::Basic(BasicOperatingMode::Normal)
 	{
-		return Ok(())
+		return Ok(());
 	}
 
 	Err(Error::<T, I>::NotOperatingNormally)

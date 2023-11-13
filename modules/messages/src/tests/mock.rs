@@ -207,6 +207,7 @@ impl pallet_balances::Config for TestRuntime {
 	type MaxReserves = ();
 	type ReserveIdentifier = ();
 	type RuntimeHoldReason = RuntimeHoldReason;
+	type RuntimeFreezeReason = RuntimeFreezeReason;
 	type FreezeIdentifier = ();
 	type MaxHolds = ConstU32<0>;
 	type MaxFreezes = ConstU32<0>;
@@ -226,6 +227,8 @@ pub type TestWeightInfo = ();
 impl Config for TestRuntime {
 	type RuntimeEvent = RuntimeEvent;
 	type WeightInfo = TestWeightInfo;
+	type MaxUnrewardedRelayerEntriesAtInboundLane = MaxUnrewardedRelayerEntriesAtInboundLane;
+	type MaxUnconfirmedMessagesAtInboundLane = MaxUnconfirmedMessagesAtInboundLane;
 
 	type ThisChain = ThisChain;
 	type BridgedChain = BridgedChain;
@@ -240,6 +243,7 @@ impl Config for TestRuntime {
 	type OnMessagesDelivered = ();
 
 	type MessageDispatch = TestMessageDispatch;
+	type BridgedChainId = TestBridgedChainId;
 }
 
 #[cfg(feature = "runtime-benchmarks")]

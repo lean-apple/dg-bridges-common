@@ -18,8 +18,7 @@
 
 pub mod codegen_runtime;
 
-use bp_bridge_hub_rococo::{SignedExtension, AVERAGE_BLOCK_INTERVAL};
-use bp_polkadot_core::SuffixedCommonSignedExtensionExt;
+use bp_bridge_hub_rococo::{BridgeHubSignedExtension, SignedExtension, AVERAGE_BLOCK_INTERVAL};
 use codec::Encode;
 use relay_substrate_client::{
 	calls::UtilityCall as MockUtilityCall, Chain, ChainWithBalances, ChainWithMessages,
@@ -92,8 +91,7 @@ impl ChainWithTransactions for BridgeHubRococo {
 				unsigned.era,
 				param.genesis_hash,
 				unsigned.nonce,
-				unsigned.tip,
-				(((), ()), ((), ())),
+				unsigned.tip
 			),
 		)?;
 

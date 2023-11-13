@@ -23,7 +23,7 @@ pallet-bridge-parachains = { path = "../parachains", default-features = false }
 
 # Substrate Dependencies
 
-frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false, optional = true }
+frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false, optional = false }
 frame-support = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 frame-system = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 pallet-transaction-payment = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }

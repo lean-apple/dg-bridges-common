@@ -1,4 +1,4 @@
-// Copyright (C) Parity Technologies (UK) Ltd.
+// Copyright 2021 Parity Technologies (UK) Ltd.
 // This file is part of Parity Bridges Common.
 
 // Parity Bridges Common is free software: you can redistribute it and/or modify
@@ -22,84 +22,23 @@
 //! single message with nonce `N`, then the transaction with nonces `N..=N+100` will
 //! be rejected. This can lower bridge throughput down to one message per block.
 
-use crate::{Config as RelayersConfig, Pallet as RelayersPallet};
-
-use bp_messages::{LaneId, MessageNonce};
+use bp_messages::MessageNonce;
 use frame_support::traits::Get;
-use frame_system::{pallet_prelude::BlockNumberFor, Pallet as SystemPallet};
-use sp_runtime::{
-	traits::{One, Zero},
-	transaction_validity::TransactionPriority,
-	Saturating,
-};
+use sp_runtime::transaction_validity::TransactionPriority;
 
 // reexport everything from `integrity_tests` module
-#[allow(unused_imports)]
 pub use integrity_tests::*;
 
-/// Compute total priority boost for message delivery transaction.
-pub fn compute_priority_boost<R: RelayersConfig>(
-	lane_id: LaneId,
+/// Compute priority boost for message delivery transaction that delivers
+/// given number of messages.
+pub fn compute_priority_boost<PriorityBoostPerMessage>(
 	messages: MessageNonce,
-	relayer: &R::AccountId,
 ) -> TransactionPriority
 where
-	usize: TryFrom<BlockNumberFor<R>>,
+	PriorityBoostPerMessage: Get<TransactionPriority>,
 {
-	compute_per_message_priority_boost::<R::PriorityBoostPerMessage>(messages)
-		.saturating_add(compute_per_lane_priority_boost::<R>(lane_id, relayer))
-}
-
-/// Compute priority boost for message delivery transaction, that depends on number
-/// of bundled messages.
-fn compute_per_message_priority_boost<PriorityBoostPerMessage: Get<TransactionPriority>>(
-	messages: MessageNonce,
-) -> TransactionPriority {
 	// we don't want any boost for transaction with single message => minus one
-	PriorityBoostPerMessage::get().saturating_mul(messages.saturating_sub(1))
-}
-
-/// Compute priority boost for message delivery transaction, that depends on
-/// the set of lane relayers and current slot.
-fn compute_per_lane_priority_boost<R: RelayersConfig>(
-	lane_id: LaneId,
-	relayer: &R::AccountId,
-) -> TransactionPriority
-where
-	usize: TryFrom<BlockNumberFor<R>>,
-{
-	// if there are no relayers, explicitly registered at this lane, noone gets additional
-	// priority boost
-	let lane_relayers = RelayersPallet::<R>::active_lane_relayers(lane_id);
-	let active_lane_relayers = lane_relayers.relayers();
-	let lane_relayers_len: BlockNumberFor<R> = (active_lane_relayers.len() as u32).into();
-	if lane_relayers_len.is_zero() {
-		return 0
-	}
-
-	// we can't deal with slots shorter than 1 block
-	let slot_length: BlockNumberFor<R> = R::SlotLength::get();
-	if slot_length < One::one() {
-		return 0
-	}
-
-	// let's compute current slot number
-	let current_block_number = SystemPallet::<R>::block_number();
-	let slot = current_block_number.saturating_sub(*lane_relayers.enacted_at()) / slot_length;
-
-	// and then get the relayer for that slot
-	let slot_relayer = match usize::try_from(slot % lane_relayers_len) {
-		Ok(slot_relayer_index) => &active_lane_relayers[slot_relayer_index],
-		Err(_) => return 0,
-	};
-
-	// if message delivery transaction is submitted by the relayer, assigned to the current
-	// slot, let's boost the transaction priority
-	if relayer != slot_relayer.relayer() {
-		return 0
-	}
-
-	R::PriorityBoostForActiveLaneRelayer::get()
+	PriorityBoostPerMessage::get().saturating_mul(messages - 1)
 }
 
 #[cfg(not(feature = "integrity-test"))]
@@ -107,7 +46,7 @@ mod integrity_tests {}
 
 #[cfg(feature = "integrity-test")]
 mod integrity_tests {
-	use super::compute_per_message_priority_boost;
+	use super::compute_priority_boost;
 	use bp_messages::ChainWithMessages;
 
 	use bp_messages::MessageNonce;
@@ -154,8 +93,7 @@ mod integrity_tests {
 				Runtime,
 				MessagesInstance,
 			>(messages, Zero::zero());
-			let priority_boost =
-				compute_per_message_priority_boost::<PriorityBoostPerMessage>(messages);
+			let priority_boost = compute_priority_boost::<PriorityBoostPerMessage>(messages);
 			let priority_with_boost = base_priority + priority_boost;
 
 			let tip = tip_boost_per_message.saturating_mul((messages - 1).unique_saturated_into());
@@ -170,7 +108,7 @@ mod integrity_tests {
 				panic!(
 					"The PriorityBoostPerMessage value ({}) must be fixed to: {}",
 					priority_boost_per_message,
-					compute_per_message_priority_boost_per_message::<Runtime, MessagesInstance>(
+					compute_priority_boost_per_message::<Runtime, MessagesInstance>(
 						tip_boost_per_message
 					),
 				);
@@ -180,7 +118,7 @@ mod integrity_tests {
 
 	/// Compute priority boost that we give to message delivery transaction for additional message.
 	#[cfg(feature = "integrity-test")]
-	fn compute_per_message_priority_boost_per_message<Runtime, MessagesInstance>(
+	fn compute_priority_boost_per_message<Runtime, MessagesInstance>(
 		tip_boost_per_message: BalanceOf<Runtime>,
 	) -> TransactionPriority
 	where
@@ -261,65 +199,5 @@ mod integrity_tests {
 			Zero::zero(),
 		)
 	}
-}
 
-#[cfg(test)]
-mod tests {
-	use super::*;
-	use crate::{mock::*, ActiveLaneRelayers};
-	use bp_relayers::{ActiveLaneRelayersSet, NextLaneRelayersSet};
-	use sp_runtime::traits::ConstU32;
-
-	#[test]
-	fn compute_per_lane_priority_boost_works() {
-		run_test(|| {
-			// insert 3 relayers to the queue
-			let lane_id = LaneId::new(1, 2);
-			let relayer1 = 100;
-			let relayer2 = 200;
-			let relayer3 = 300;
-			let mut next_set: NextLaneRelayersSet<_, _, ConstU32<3>> =
-				NextLaneRelayersSet::empty(5);
-			assert!(next_set.try_insert(relayer1, 0));
-			assert!(next_set.try_insert(relayer2, 0));
-			assert!(next_set.try_insert(relayer3, 0));
-			let mut active_set = ActiveLaneRelayersSet::default();
-			active_set.activate_next_set(7, next_set, |_| true);
-			ActiveLaneRelayers::<TestRuntime>::insert(lane_id, active_set);
-
-			// at blocks 7..=7+SlotLength relayer1 gets the boost
-			System::set_block_number(6);
-			for _ in 7..SlotLength::get() + 7 {
-				System::set_block_number(System::block_number() + 1);
-				assert_eq!(
-					compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer1),
-					PriorityBoostForActiveLaneRelayer::get(),
-				);
-				assert_eq!(compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer2), 0,);
-				assert_eq!(compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer3), 0,);
-			}
-
-			// at next slot, relayer2 gets the boost
-			for _ in 1..=SlotLength::get() {
-				System::set_block_number(System::block_number() + 1);
-				assert_eq!(compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer1), 0,);
-				assert_eq!(
-					compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer2),
-					PriorityBoostForActiveLaneRelayer::get(),
-				);
-				assert_eq!(compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer3), 0,);
-			}
-
-			// at next slot, relayer3 gets the boost
-			for _ in 1..=SlotLength::get() {
-				System::set_block_number(System::block_number() + 1);
-				assert_eq!(compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer1), 0,);
-				assert_eq!(compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer2), 0,);
-				assert_eq!(
-					compute_per_lane_priority_boost::<TestRuntime>(lane_id, &relayer3),
-					PriorityBoostForActiveLaneRelayer::get(),
-				);
-			}
-		});
-	}
 }

@@ -50,10 +50,11 @@ use sp_runtime::{
 };
 use sp_std::{boxed::Box, convert::TryInto, prelude::*};
 
-mod call_ext;
-#[cfg(test)]
-mod mock;
-mod storage_types;
+
+// Re-export in crate namespace for `construct_runtime!`
+pub use call_ext::*;
+pub use pallet::*;
+pub use weights::WeightInfo;
 
 /// Module, containing weights for this pallet.
 pub mod weights;
@@ -61,10 +62,10 @@ pub mod weights;
 #[cfg(feature = "runtime-benchmarks")]
 pub mod benchmarking;
 
-// Re-export in crate namespace for `construct_runtime!`
-pub use call_ext::*;
-pub use pallet::*;
-pub use weights::WeightInfo;
+mod call_ext;
+#[cfg(test)]
+mod mock;
+mod storage_types;
 
 /// The target that will be used when publishing logs related to this pallet.
 pub const LOG_TARGET: &str = "runtime::bridge-grandpa";
