@@ -12,6 +12,7 @@ scale-info = { version = "2.9.0", default-features = false, features = ["bit-vec
 
 # Substrate Dependencies
 sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
+sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 
 [features]
 default = [ "std" ]

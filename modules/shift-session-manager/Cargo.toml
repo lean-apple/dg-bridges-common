@@ -17,6 +17,8 @@ frame-system = { git = "https://github.com/paritytech/polkadot-sdk", branch = "m
 pallet-session = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 sp-staking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 sp-std = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
+sp-io = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
+sp-state-machine = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 
 [dev-dependencies]
 sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }

@@ -193,6 +193,9 @@ parameter_types! {
 	pub const TargetBlockFullness: Perquintill = Perquintill::from_percent(25);
 	pub const TransactionBaseFee: ThisChainBalance = 0;
 	pub const TransactionByteFee: ThisChainBalance = 1;
+	pub const MaxUnrewardedRelayerEntriesAtInboundLane: MessageNonce = 16;
+	pub const MaxUnconfirmedMessagesAtInboundLane: MessageNonce = 1_000;
+	pub const BridgedChainId: ChainId = TEST_BRIDGED_CHAIN_ID;
 	pub AdjustmentVariable: Multiplier = Multiplier::saturating_from_rational(3, 100_000);
 	pub MinimumMultiplier: Multiplier = Multiplier::saturating_from_rational(1, 1_000_000u128);
 	pub MaximumMultiplier: Multiplier = sp_runtime::traits::Bounded::max_value();
@@ -297,6 +300,9 @@ impl pallet_bridge_messages::Config for TestRuntime {
 	type RuntimeEvent = RuntimeEvent;
 	type WeightInfo = pallet_bridge_messages::weights::BridgeWeight<TestRuntime>;
 
+	type MaxUnrewardedRelayerEntriesAtInboundLane = MaxUnrewardedRelayerEntriesAtInboundLane;
+	type MaxUnconfirmedMessagesAtInboundLane = MaxUnconfirmedMessagesAtInboundLane;
+
 	type OutboundPayload = Vec<u8>;
 
 	type InboundPayload = Vec<u8>;
@@ -309,6 +315,7 @@ impl pallet_bridge_messages::Config for TestRuntime {
 	type ThisChain = ThisUnderlyingChain;
 	type BridgedChain = BridgedUnderlyingChain;
 	type BridgedHeaderChain = BridgeGrandpa;
+	type BridgedChainId = BridgedChainId;
 }
 
 impl pallet_bridge_relayers::Config for TestRuntime {
@@ -386,8 +393,8 @@ impl MessageDispatch for DummyMessageDispatch {
 	type DispatchLevelResult = ();
 
 	fn is_active(lane: LaneId) -> bool {
-		frame_support::storage::unhashed::take::<bool>(&(b"inactive", lane).encode()[..]) !=
-			Some(false)
+		frame_support::storage::unhashed::take::<bool>(&(b"inactive", lane).encode()[..])
+			!= Some(false)
 	}
 
 	fn dispatch_weight(_message: &mut DispatchMessage<Self::DispatchPayload>) -> Weight {

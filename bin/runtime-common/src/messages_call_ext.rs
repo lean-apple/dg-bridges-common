@@ -340,7 +340,7 @@ mod tests {
 		for n in 0..BridgedUnderlyingChain::MAX_UNREWARDED_RELAYERS_IN_CONFIRMATION_TX {
 			inbound_lane_state.relayers.push_back(UnrewardedRelayer {
 				relayer: Default::default(),
-				messages: DeliveredMessages { begin: n + 1, end: n + 1 },
+				messages: DeliveredMessages { begin: n + 1, end: n + 1, relayer_reward_per_message: None, },
 			});
 		}
 		pallet_bridge_messages::InboundLanes::<TestRuntime>::insert(
@@ -357,6 +357,7 @@ mod tests {
 			messages: DeliveredMessages {
 				begin: 1,
 				end: BridgedUnderlyingChain::MAX_UNCONFIRMED_MESSAGES_IN_CONFIRMATION_TX,
+				relayer_reward_per_message: None,
 			},
 		});
 		pallet_bridge_messages::InboundLanes::<TestRuntime>::insert(

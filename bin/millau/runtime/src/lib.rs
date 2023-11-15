@@ -43,7 +43,7 @@ use pallet_transaction_payment::{FeeDetails, Multiplier, RuntimeDispatchInfo};
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_consensus_beefy::{ecdsa_crypto::AuthorityId as BeefyId, mmr::MmrLeafVersion, ValidatorSet};
-use sp_core::{ConstBool, ConstU128, OpaqueMetadata};
+use sp_core::{ConstBool, ConstU128, OpaqueMetadata, Get};
 use sp_runtime::{
 	create_runtime_str, generic, impl_opaque_keys,
 	traits::{Block as BlockT, IdentityLookup, Keccak256, NumberFor, OpaqueKeys},
@@ -329,6 +329,7 @@ impl pallet_balances::Config for Runtime {
 	type MaxReserves = ConstU32<50>;
 	type ReserveIdentifier = [u8; 8];
 	type RuntimeHoldReason = RuntimeHoldReason;
+	type RuntimeFreezeReason = RuntimeFreezeReason;
 	type FreezeIdentifier = ();
 	type MaxHolds = ConstU32<0>;
 	type MaxFreezes = ConstU32<0>;
@@ -446,6 +447,7 @@ impl pallet_bridge_messages::Config<WithRialtoMessagesInstance> for Runtime {
 		Runtime,
 		WithRialtoMessagesInstance,
 		frame_support::traits::ConstU64<100_000>,
+		frame_support::traits::ConstU128<100_000>,
 	>;
 
 	type MessageDispatch = crate::rialto_messages::FromRialtoMessageDispatch;
@@ -473,6 +475,7 @@ impl pallet_bridge_messages::Config<WithRialtoParachainMessagesInstance> for Run
 	type DeliveryConfirmationPayments = pallet_bridge_relayers::DeliveryConfirmationPaymentsAdapter<
 		Runtime,
 		WithRialtoParachainMessagesInstance,
+		frame_support::traits::ConstU64<100_000>,
 		frame_support::traits::ConstU64<100_000>,
 	>;
 
@@ -765,7 +768,7 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl sp_consensus_beefy::BeefyApi<Block> for Runtime {
+	impl sp_consensus_beefy::BeefyApi<Block, BeefyId> for Runtime {
 		fn beefy_genesis() -> Option<BlockNumber> {
 			Beefy::genesis_block()
 		}
@@ -879,9 +882,9 @@ impl_runtime_apis! {
 			BridgeRialtoGrandpa::best_finalized()
 		}
 
-		fn accepted_grandpa_finality_proofs(
+		fn synced_headers_grandpa_info(
 		) -> Vec<bp_header_chain::justification::GrandpaJustification<bp_rialto::Header>> {
-			BridgeRialtoGrandpa::accepted_finality_proofs()
+			BridgeRialtoGrandpa::synced_headers_grandpa_info()
 		}
 	}
 
@@ -890,9 +893,9 @@ impl_runtime_apis! {
 			BridgeWestendGrandpa::best_finalized()
 		}
 
-		fn accepted_grandpa_finality_proofs(
+		fn synced_headers_grandpa_info(
 		) -> Vec<bp_header_chain::justification::GrandpaJustification<bp_westend::Header>> {
-			BridgeWestendGrandpa::accepted_finality_proofs()
+			BridgeWestendGrandpa::synced_headers_grandpa_info()
 		}
 	}
 

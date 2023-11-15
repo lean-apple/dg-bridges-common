@@ -119,8 +119,7 @@ impl Alternative {
 				None,
 				None,
 				None,
-				properties,
-				Default::default(),
+		properties
 			),
 			Alternative::LocalTestnet => ChainSpec::from_genesis(
 				"Rialto Local",

@@ -23,25 +23,27 @@
 
 #![cfg(test)]
 
-use crate::messages_xcm_extension::XcmAsPlainPayload;
-
 use bp_header_chain::ChainWithGrandpa;
-use bp_messages::{target_chain::ForbidInboundMessages, ChainWithMessages, LaneId, MessageNonce};
+use bp_messages::{
+	target_chain::{DispatchMessage, MessageDispatch},
+	ChainWithMessages, LaneId, MessageNonce,
+};
 use bp_parachains::SingleParaStoredHeaderDataBuilder;
 use bp_relayers::PayRewardFromAccount;
-use bp_runtime::{Chain, ChainId, Parachain};
+use bp_runtime::{Chain, ChainId, Parachain, messages::MessageDispatchResult};
 use frame_support::{
 	parameter_types,
 	weights::{ConstantMultiplier, IdentityFee, RuntimeDbWeight, Weight},
-	StateVersion,
 };
 use pallet_transaction_payment::Multiplier;
 use sp_core::Get;
 use sp_runtime::{
 	testing::H256,
 	traits::{BlakeTwo256, ConstU32, ConstU64, ConstU8, IdentityLookup},
-	FixedPointNumber, Perquintill,
+	transaction_validity::TransactionPriority,
+	FixedPointNumber, Perquintill, StateVersion,
 };
+use codec::Encode;
 
 /// Account identifier at `ThisChain`.
 pub type ThisChainAccountId = u64;
@@ -98,6 +100,11 @@ pub const TEST_BRIDGED_CHAIN_ID: ChainId = *b"brdg";
 /// Maximal extrinsic size at the `BridgedChain`.
 pub const BRIDGED_CHAIN_MAX_EXTRINSIC_SIZE: u32 = 1024;
 
+/// Default reward that is paid to relayer for delivering a single message.
+pub const DEFAULT_REWARD_PER_MESSAGE: ThisChainBalance = 100_000;
+/// Maximal reward that may be paid to relayer for delivering a single message.
+pub const MAX_REWARD_PER_MESSAGE: ThisChainBalance = 100_000;
+
 frame_support::construct_runtime! {
 	pub enum TestRuntime
 	{
@@ -127,7 +134,14 @@ parameter_types! {
 	pub AdjustmentVariable: Multiplier = Multiplier::saturating_from_rational(3, 100_000);
 	pub MinimumMultiplier: Multiplier = Multiplier::saturating_from_rational(1, 1_000_000u128);
 	pub MaximumMultiplier: Multiplier = sp_runtime::traits::Bounded::max_value();
+	pub MaxActiveRelayersPerLane: u32 = 4;
+	pub MaxNextRelayersPerLane: u32 = 16;
 	pub const ReserveId: [u8; 8] = *b"brdgrlrs";
+	pub const MaxUnrewardedRelayerEntriesAtInboundLane: MessageNonce = 16;
+	pub const MaxUnconfirmedMessagesAtInboundLane: MessageNonce = 1_000;
+	pub const BridgedChainId: ChainId = TEST_BRIDGED_CHAIN_ID;
+	pub SlotLength: u32 = 16;
+	pub PriorityBoostForActiveLaneRelayer: TransactionPriority = 1;
 }
 
 impl frame_system::Config for TestRuntime {
@@ -174,6 +188,7 @@ impl pallet_balances::Config for TestRuntime {
 	type MaxReserves = ConstU32<50>;
 	type ReserveIdentifier = [u8; 8];
 	type RuntimeHoldReason = RuntimeHoldReason;
+	type RuntimeFreezeReason = RuntimeFreezeReason;
 	type FreezeIdentifier = ();
 	type MaxHolds = ConstU32<0>;
 	type MaxFreezes = ConstU32<0>;
@@ -213,25 +228,34 @@ impl pallet_bridge_parachains::Config for TestRuntime {
 	type WeightInfo = pallet_bridge_parachains::weights::BridgeWeight<TestRuntime>;
 }
 
+pub type TestDeliveryConfirmationPaymentsAdapter =
+	pallet_bridge_relayers::DeliveryConfirmationPaymentsAdapter<
+		TestRuntime,
+		(),
+		ConstU64<DEFAULT_REWARD_PER_MESSAGE>,
+		ConstU64<MAX_REWARD_PER_MESSAGE>,
+	>;
+
 impl pallet_bridge_messages::Config for TestRuntime {
 	type RuntimeEvent = RuntimeEvent;
 	type WeightInfo = pallet_bridge_messages::weights::BridgeWeight<TestRuntime>;
 
-	type OutboundPayload = XcmAsPlainPayload;
+	type MaxUnrewardedRelayerEntriesAtInboundLane = MaxUnrewardedRelayerEntriesAtInboundLane;
+	type MaxUnconfirmedMessagesAtInboundLane = MaxUnconfirmedMessagesAtInboundLane;
+
+	type OutboundPayload = Vec<u8>;
 
 	type InboundPayload = Vec<u8>;
 	type DeliveryPayments = ();
 
-	type DeliveryConfirmationPayments = pallet_bridge_relayers::DeliveryConfirmationPaymentsAdapter<
-		TestRuntime,
-		(),
-		ConstU64<100_000>,
-	>;
+	type DeliveryConfirmationPayments = TestDeliveryConfirmationPaymentsAdapter;
+	type OnMessagesDelivered = ();
 
-	type MessageDispatch = ForbidInboundMessages<Vec<u8>>;
+	type MessageDispatch = TestMessageDispatch;
 	type ThisChain = ThisUnderlyingChain;
 	type BridgedChain = BridgedUnderlyingChain;
 	type BridgedHeaderChain = BridgeGrandpa;
+	type BridgedChainId = BridgedChainId;
 }
 
 impl pallet_bridge_relayers::Config for TestRuntime {
@@ -239,6 +263,11 @@ impl pallet_bridge_relayers::Config for TestRuntime {
 	type Reward = ThisChainBalance;
 	type PaymentProcedure = TestPaymentProcedure;
 	type StakeAndSlash = TestStakeAndSlash;
+	type MaxActiveRelayersPerLane = MaxActiveRelayersPerLane;
+	type MaxNextRelayersPerLane = MaxNextRelayersPerLane;
+	type SlotLength = SlotLength;
+	type PriorityBoostPerMessage = ConstU64<1>;
+	type PriorityBoostForActiveLaneRelayer = PriorityBoostForActiveLaneRelayer;
 	type WeightInfo = ();
 }
 
@@ -345,4 +374,33 @@ impl Parachain for BridgedUnderlyingParachain {
 /// Run test within test externalities.
 pub fn run_test(test: impl FnOnce()) {
 	sp_io::TestExternalities::new(Default::default()).execute_with(test)
+}
+
+/// Test message dispatcher.
+pub struct TestMessageDispatch;
+
+impl TestMessageDispatch {
+	pub fn deactivate(lane: LaneId) {
+		frame_support::storage::unhashed::put(&(b"inactive", lane).encode()[..], &false);
+	}
+}
+
+impl MessageDispatch for TestMessageDispatch {
+	type DispatchPayload = Vec<u8>;
+	type DispatchLevelResult = ();
+
+	fn is_active(lane: LaneId) -> bool {
+		frame_support::storage::unhashed::take::<bool>(&(b"inactive", lane).encode()[..]) !=
+			Some(false)
+	}
+
+	fn dispatch_weight(_message: &mut DispatchMessage<Self::DispatchPayload>) -> Weight {
+		Weight::zero()
+	}
+
+	fn dispatch(
+		_: DispatchMessage<Self::DispatchPayload>,
+	) -> MessageDispatchResult<Self::DispatchLevelResult> {
+		MessageDispatchResult { unspent_weight: Weight::zero(), dispatch_level_result: () }
+	}
 }

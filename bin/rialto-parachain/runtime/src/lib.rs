@@ -38,7 +38,7 @@ use sp_runtime::{
 	transaction_validity::{TransactionSource, TransactionValidity, TransactionValidityError},
 	ApplyExtrinsicResult,
 };
-
+use sp_core::Get;
 use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
@@ -302,6 +302,7 @@ impl pallet_balances::Config for Runtime {
 	type MaxReserves = ConstU32<50>;
 	type ReserveIdentifier = [u8; 8];
 	type RuntimeHoldReason = RuntimeHoldReason;
+	type RuntimeFreezeReason = RuntimeFreezeReason;
 	type FreezeIdentifier = ();
 	type MaxHolds = ConstU32<0>;
 	type MaxFreezes = ConstU32<0>;
@@ -328,6 +329,7 @@ parameter_types! {
 }
 
 impl cumulus_pallet_parachain_system::Config for Runtime {
+		type WeightInfo = ();
 	type RuntimeEvent = RuntimeEvent;
 	type OnSystemEvent = ();
 	type SelfParaId = parachain_info::Pallet<Runtime>;
@@ -568,6 +570,7 @@ impl pallet_bridge_messages::Config<WithMillauMessagesInstance> for Runtime {
 		Runtime,
 		WithMillauMessagesInstance,
 		frame_support::traits::ConstU128<100_000>,
+		frame_support::traits::ConstU128<100_000>,
 	>;
 
 	type MessageDispatch = crate::millau_messages::FromMillauMessageDispatch;
@@ -730,9 +733,9 @@ impl_runtime_apis! {
 			BridgeMillauGrandpa::best_finalized()
 		}
 
-		fn accepted_grandpa_finality_proofs(
+		fn synced_headers_grandpa_info(
 		) -> Vec<bp_header_chain::justification::GrandpaJustification<bp_millau::Header>> {
-			BridgeMillauGrandpa::accepted_finality_proofs()
+			BridgeMillauGrandpa::synced_headers_grandpa_info()
 		}
 	}
 

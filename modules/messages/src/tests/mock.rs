@@ -166,6 +166,9 @@ parameter_types! {
 	pub const MaximumBlockWeight: Weight = Weight::from_parts(1024, 0);
 	pub const MaximumBlockLength: u32 = 2 * 1024;
 	pub const AvailableBlockRatio: Perbill = Perbill::one();
+	pub const MaxUnrewardedRelayerEntriesAtInboundLane: MessageNonce = 16;
+	pub const MaxUnconfirmedMessagesAtInboundLane: MessageNonce = 1_000;
+	pub const TestBridgedChainId: bp_runtime::ChainId = *b"test";
 }
 
 pub type DbWeight = RocksDbWeight;
