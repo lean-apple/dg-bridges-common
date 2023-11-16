@@ -34,9 +34,9 @@ use frame_support::{
 	CloneNoBound, DefaultNoBound, EqNoBound, PartialEqNoBound, RuntimeDebugNoBound,
 };
 use pallet_bridge_grandpa::{
-	CallSubType as GrandpaCallSubType, Config as GrandpaConfig, SubmitFinalityProofHelper,
-	SubmitFinalityProofInfo,
+	CallSubType as GrandpaCallSubType, Config as GrandpaConfig, SubmitFinalityProofHelper
 };
+use bp_header_chain::SubmitFinalityProofInfo;
 use pallet_bridge_messages::Config as MessagesConfig;
 use pallet_bridge_parachains::{
 	BoundedBridgeGrandpaConfig, CallSubType as ParachainsCallSubType, Config as ParachainsConfig,
