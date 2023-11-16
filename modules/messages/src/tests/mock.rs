@@ -264,7 +264,7 @@ impl crate::benchmarking::Config<()> for TestRuntime {
 			REGULAR_PAYLOAD.declared_weight * params.message_nonces.saturating_len();
 		(
 			*prepare_messages_proof(
-				params.message_nonces.into_iter().map(|n| message(n, REGULAR_PAYLOAD)).collect(),
+				params.message_nonces.map(|n| message(n, REGULAR_PAYLOAD)).collect(),
 				params.outbound_lane_data,
 			),
 			dispatch_weight,

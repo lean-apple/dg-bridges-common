@@ -56,4 +56,4 @@ std = [
 	"xcm-executor/std",
 	"xcm/std",
 ]
-runtime-benchmarks = []
+runtime-benchmarks = [ "xcm-builder/runtime-benchmarks" ]

@@ -28,7 +28,7 @@ sp-trie = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master
 trie-db = { version = "0.28.0", default-features = false }
 
 [dev-dependencies]
-hex-literal = "0.4"
+hex-literal = "0.4.1"
 
 [features]
 default = [ "std" ]

@@ -27,6 +27,7 @@ fixed_hash::construct_fixed_hash! {
 	pub struct DatagenHash(64);
 }
 
+
 impl_serde::impl_fixed_hash_serde!(DatagenHash, 64);
 impl_codec::impl_fixed_hash_codec!(DatagenHash, 64);
 

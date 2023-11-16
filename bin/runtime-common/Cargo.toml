@@ -8,7 +8,7 @@ repository.workspace = true
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "3.1.5", default-features = false, features = ["derive"] }
+codec = { package = 'parity-scale-codec', version = '3.6.5', default-features = false, features = ['derive']}
 hash-db = { version = "0.16.0", default-features = false }
 log = { version = "0.4.20", default-features = false }
 scale-info = { version = "2.10.0", default-features = false, features = ["derive"] }
@@ -55,8 +55,8 @@ pallet-bridge-messages = { path = "../../modules/messages", features = ["std", "
 [features]
 default = [ "std" ]
 std = [
-	"bp-datagen/std",
 	"bp-datagen-parachain/std",
+	"bp-datagen/std",
 	"bp-header-chain/std",
 	"bp-messages/std",
 	"bp-parachains/std",

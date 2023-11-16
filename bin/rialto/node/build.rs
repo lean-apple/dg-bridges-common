@@ -14,9 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-use substrate_build_script_utils::{generate_cargo_keys, rerun_if_git_head_changed};
+use substrate_wasm_builder::WasmBuilder;
 
 fn main() {
-	generate_cargo_keys();
-	rerun_if_git_head_changed();
+	WasmBuilder::new()
+		.with_current_project()
+		.import_memory()
+		.export_heap_base()
+		.disable_runtime_version_section_check()
+		.build()
 }

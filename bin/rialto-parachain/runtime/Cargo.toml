@@ -11,7 +11,7 @@ substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", b
 
 [dependencies]
 codec = { package = 'parity-scale-codec', version = '3.1.5', default-features = false, features = ['derive']}
-hex-literal = "0.4"
+hex-literal = "0.4.1"
 scale-info = { version = "2.10.0", default-features = false, features = ["derive"] }
 
 # Bridge depedencies
@@ -39,6 +39,7 @@ sp-offchain = { git = "https://github.com/paritytech/polkadot-sdk", branch = "ma
 sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 sp-session = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 sp-std = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
+sp-storage = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 sp-transaction-pool = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 sp-version = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 
@@ -83,60 +84,63 @@ bridge-runtime-common = { path = "../../runtime-common", features = ["integrity-
 static_assertions = "1.1"
 
 [features]
-default = ['std']
+default = [ 'std' ]
 runtime-benchmarks = [
-	'sp-runtime/runtime-benchmarks',
 	'frame-support/runtime-benchmarks',
 	'frame-system/runtime-benchmarks',
 	'pallet-balances/runtime-benchmarks',
 	'pallet-timestamp/runtime-benchmarks',
+	"pallet-xcm/runtime-benchmarks",
+	'sp-runtime/runtime-benchmarks',
 	'xcm-builder/runtime-benchmarks',
 ]
 std = [
 	"bp-messages/std",
 	"bp-millau/std",
 	"bp-relayers/std",
-	"bp-runtime/std",
 	"bp-rialto-parachain/std",
+	"bp-runtime/std",
 	"bridge-runtime-common/std",
 	"codec/std",
-	"scale-info/std",
-	"sp-api/std",
-	"sp-std/std",
-	"sp-io/std",
-	"sp-core/std",
-	"sp-runtime/std",
-	"sp-version/std",
-	"sp-offchain/std",
-	"sp-session/std",
-	"sp-block-builder/std",
-	"sp-transaction-pool/std",
-	"sp-inherents/std",
-	"frame-support/std",
+	"cumulus-pallet-aura-ext/std",
+	"cumulus-pallet-parachain-system/std",
+	"cumulus-pallet-xcm/std",
+	"cumulus-pallet-xcmp-queue/std",
+	"cumulus-primitives-core/std",
+	"cumulus-primitives-timestamp/std",
 	"frame-executive/std",
-	"frame-system/std",
+	"frame-support/std",
 	"frame-system-rpc-runtime-api/std",
+	"frame-system/std",
+	"pallet-aura/std",
 	"pallet-balances/std",
 	"pallet-bridge-grandpa/std",
 	"pallet-bridge-messages/std",
 	"pallet-bridge-relayers/std",
 	"pallet-message-queue/std",
-	"pallet-timestamp/std",
 	"pallet-sudo/std",
-	"pallet-transaction-payment/std",
+	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
-	"parachains-common/std",
+	"pallet-transaction-payment/std",
+	"pallet-xcm/std",
 	"parachain-info/std",
+	"parachains-common/std",
 	"polkadot-runtime-common/std",
-	"cumulus-pallet-aura-ext/std",
-	"cumulus-pallet-parachain-system/std",
-	"cumulus-pallet-xcmp-queue/std",
-	"cumulus-pallet-xcm/std",
-	"cumulus-primitives-core/std",
-	"cumulus-primitives-timestamp/std",
-	"xcm/std",
+	"scale-info/std",
+	"sp-api/std",
+	"sp-block-builder/std",
+	"sp-consensus-aura/std",
+	"sp-core/std",
+	"sp-inherents/std",
+	"sp-io/std",
+	"sp-offchain/std",
+	"sp-runtime/std",
+	"sp-session/std",
+	"sp-std/std",
+	"sp-storage/std",
+	"sp-transaction-pool/std",
+	"sp-version/std",
 	"xcm-builder/std",
 	"xcm-executor/std",
-	"pallet-aura/std",
-	"sp-consensus-aura/std",
+	"xcm/std",
 ]

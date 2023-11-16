@@ -48,10 +48,10 @@ std = [
 	"log/std",
 	"pallet-bridge-grandpa/std",
 	"scale-info/std",
+	"sp-io/std",
 	"sp-runtime/std",
 	"sp-std/std",
 	"sp-trie/std",
-	"sp-io/std"
 ]
 runtime-benchmarks = [
 	"frame-benchmarking/runtime-benchmarks",

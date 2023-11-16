@@ -119,7 +119,12 @@ impl Alternative {
 				None,
 				None,
 				None,
-		properties
+				properties,
+				Extensions {
+					relay_chain: "rialto_dev".into(),
+					para_id: id.into(),
+				},
+				&vec![0, 1, 2, 4, 5, 6],
 			),
 			Alternative::LocalTestnet => ChainSpec::from_genesis(
 				"Rialto Local",
@@ -141,7 +146,11 @@ impl Alternative {
 				None,
 				None,
 				properties,
-				Default::default(),
+				Extensions {
+					relay_chain: "rialto_local".into(),
+					para_id: id.into(),
+				},
+				&vec![0, 1, 2, 4, 5, 6],
 			),
 		}
 	}
@@ -249,8 +258,6 @@ fn testnet_genesis(
 				max_pov_size: polkadot_primitives::MAX_POV_SIZE,
 				max_head_data_size: 32 * 1024,
 				group_rotation_frequency: 20,
-				chain_availability_period: 4,
-				thread_availability_period: 4,
 				max_upward_queue_count: 8,
 				max_upward_queue_size: 1024 * 1024,
 				max_downward_message_size: 1024 * 1024,
@@ -261,10 +268,8 @@ fn testnet_genesis(
 				hrmp_channel_max_capacity: 8,
 				hrmp_channel_max_total_size: 8 * 1024,
 				hrmp_max_parachain_inbound_channels: 4,
-				hrmp_max_parathread_inbound_channels: 4,
 				hrmp_channel_max_message_size: 1024 * 1024,
 				hrmp_max_parachain_outbound_channels: 4,
-				hrmp_max_parathread_outbound_channels: 4,
 				hrmp_max_message_num_per_candidate: 5,
 				dispute_period: 6,
 				no_show_slots: 2,
