@@ -43,7 +43,7 @@ mod stake_adapter;
 mod weights_ext;
 
 pub mod benchmarking;
-//pub mod extension;
+pub mod extension;
 pub mod weights;
 
 /// The target that will be used when publishing logs related to this pallet.

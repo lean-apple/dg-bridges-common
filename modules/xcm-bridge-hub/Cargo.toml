@@ -49,6 +49,7 @@ std = [
 	"pallet-bridge-messages/std",
 	"scale-info/std",
 	"sp-core/std",
+	"sp-io/std",
 	"sp-runtime/std",
 	"sp-std/std",
 	"xcm-builder/std",

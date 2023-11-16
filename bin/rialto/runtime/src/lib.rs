@@ -249,9 +249,9 @@ impl pallet_beefy::Config for Runtime {
 
 impl pallet_grandpa::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
-	// TODO: update me (https://github.com/paritytech/parity-bridges-common/issues/78)
 	type WeightInfo = ();
 	type MaxAuthorities = ConstU32<10>;
+	type MaxNominators = ConstU32<0>;
 	type MaxSetIdSessionEntries = ConstU64<0>;
 	type KeyOwnerProof = sp_core::Void;
 	type EquivocationReportSystem = ();
@@ -459,8 +459,8 @@ construct_runtime!(
 		ShiftSessionManager: pallet_shift_session_manager::{Pallet},
 
 		// BEEFY Bridges support.
-		Beefy: pallet_beefy::{Pallet, Storage, Config<T>},
-		Mmr: pallet_mmr::{Pallet, Storage},
+		Beefy: pallet_beefy::{Pallet, Call, Storage, Config<T>, ValidateUnsigned} = 200,
+		Mmr: pallet_mmr::{Pallet, Storage} = 201,
 		MmrLeaf: pallet_beefy_mmr::{Pallet, Storage},
 
 		// Millau bridge modules.
@@ -552,7 +552,7 @@ impl_runtime_apis! {
 		}
 
 		fn execute_block(block: Block) {
-			Executive::execute_block(block);
+			Executive::execute_block(block)
 		}
 
 		fn initialize_block(header: &<Block as BlockT>::Header) {
