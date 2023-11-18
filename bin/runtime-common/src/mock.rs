@@ -36,7 +36,6 @@ use frame_support::{
 	weights::{ConstantMultiplier, IdentityFee, RuntimeDbWeight, Weight},
 };
 use pallet_transaction_payment::Multiplier;
-use sp_core::Get;
 use sp_runtime::{
 	testing::H256,
 	traits::{BlakeTwo256, ConstU32, ConstU64, ConstU8, IdentityLookup},
@@ -90,10 +89,6 @@ pub type TestStakeAndSlash = pallet_bridge_relayers::StakeAndSlashNamed<
 	ConstU32<8>,
 >;
 
-/// Message lane used in tests.
-pub fn test_lane_id() -> LaneId {
-	crate::messages_xcm_extension::LaneIdFromChainId::<TestRuntime, ()>::get()
-}
 
 /// Bridged chain id used in tests.
 pub const TEST_BRIDGED_CHAIN_ID: ChainId = *b"brdg";
@@ -275,8 +270,6 @@ impl pallet_bridge_relayers::Config for TestRuntime {
 pub struct ThisUnderlyingChain;
 
 impl Chain for ThisUnderlyingChain {
-	const ID: ChainId = *b"tuch";
-
 	type BlockNumber = ThisChainBlockNumber;
 	type Hash = ThisChainHash;
 	type Hasher = ThisChainHasher;
@@ -310,8 +303,6 @@ pub struct BridgedUnderlyingChain;
 pub struct BridgedUnderlyingParachain;
 
 impl Chain for BridgedUnderlyingChain {
-	const ID: ChainId = TEST_BRIDGED_CHAIN_ID;
-
 	type BlockNumber = BridgedChainBlockNumber;
 	type Hash = BridgedChainHash;
 	type Hasher = BridgedChainHasher;
@@ -346,8 +337,6 @@ impl ChainWithMessages for BridgedUnderlyingChain {
 }
 
 impl Chain for BridgedUnderlyingParachain {
-	const ID: ChainId = *b"bupc";
-
 	type BlockNumber = BridgedChainBlockNumber;
 	type Hash = BridgedChainHash;
 	type Hasher = BridgedChainHasher;

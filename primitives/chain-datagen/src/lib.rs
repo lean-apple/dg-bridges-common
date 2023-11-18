@@ -161,8 +161,6 @@ pub type WeightToFee = IdentityFee<Balance>;
 pub struct Datagen;
 
 impl Chain for Datagen {
-	const ID: ChainId = *b"dtgn";
-
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hasher = Hasher;

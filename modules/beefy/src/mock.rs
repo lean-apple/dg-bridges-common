@@ -109,8 +109,6 @@ impl beefy::Config for TestRuntime {
 pub struct TestBridgedChain;
 
 impl Chain for TestBridgedChain {
-	const ID: ChainId = *b"tbch";
-
 	type BlockNumber = TestBridgedBlockNumber;
 	type Hash = H256;
 	type Hasher = BlakeTwo256;

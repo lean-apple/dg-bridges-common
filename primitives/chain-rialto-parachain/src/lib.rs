@@ -109,7 +109,6 @@ pub type WeightToFee = IdentityFee<Balance>;
 pub struct RialtoParachain;
 
 impl Chain for RialtoParachain {
-	const ID: ChainId = *b"rlpa";
 
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;

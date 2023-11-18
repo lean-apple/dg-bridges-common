@@ -33,8 +33,6 @@ use sp_runtime::{RuntimeDebug, StateVersion};
 pub struct BridgeHubPolkadot;
 
 impl Chain for BridgeHubPolkadot {
-	const ID: ChainId = *b"bhpd";
-
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hasher = Hasher;

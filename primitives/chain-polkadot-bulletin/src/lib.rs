@@ -27,7 +27,7 @@ use bp_runtime::{
 		CheckEra, CheckGenesis, CheckNonZeroSender, CheckNonce, CheckSpecVersion, CheckTxVersion,
 		CheckWeight, GenericSignedExtension, GenericSignedExtensionSchema,
 	},
-	Chain, ChainId, TransactionEra,
+	Chain, TransactionEra,
 };
 use codec::{Decode, Encode};
 use frame_support::{
@@ -179,8 +179,6 @@ parameter_types! {
 pub struct PolkadotBulletin;
 
 impl Chain for PolkadotBulletin {
-	const ID: ChainId = *b"pdbc";
-
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hasher = Hasher;

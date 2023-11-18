@@ -23,7 +23,6 @@ use bp_messages::{
 	LaneId, MessageNonce,
 };
 use bp_relayers::{RewardsAccountOwner, RewardsAccountParams};
-use bp_runtime::Chain;
 use frame_support::traits::Get;
 use sp_arithmetic::traits::{Saturating, UniqueSaturatedFrom};
 use sp_runtime::traits::UniqueSaturatedInto;
@@ -80,7 +79,7 @@ where
 			relayers_rewards,
 			RewardsAccountParams::new(
 				lane_id,
-				T::BridgedChain::ID,
+				T::BridgedChainId::get(),
 				RewardsAccountOwner::BridgedChain,
 			),
 		);

@@ -138,6 +138,7 @@ pub mod pallet {
 		#[pallet::constant]
 		type BridgedChainId: Get<ChainId>;
 
+		/// Maximal number of unrewarded relayer entries at inbound lane
 		type MaxUnrewardedRelayerEntriesAtInboundLane: Get<MessageNonce>;
 		/// Maximal number of unconfirmed messages at inbound lane. Unconfirmed means that the
 		/// message has been delivered, but either confirmations haven't been delivered back to the

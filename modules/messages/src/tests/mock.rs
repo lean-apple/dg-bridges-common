@@ -78,8 +78,6 @@ pub type TestDispatchLevelResult = ();
 pub struct ThisChain;
 
 impl Chain for ThisChain {
-	const ID: ChainId = *b"ttch";
-
 	type BlockNumber = u64;
 	type Hash = H256;
 	type Hasher = BlakeTwo256;
@@ -111,8 +109,6 @@ pub type BridgedHeaderHash = H256;
 pub type BridgedChainHeader = SubstrateHeader;
 
 impl Chain for BridgedChain {
-	const ID: ChainId = *b"tbch";
-
 	type BlockNumber = u64;
 	type Hash = BridgedHeaderHash;
 	type Hasher = BlakeTwo256;
@@ -264,7 +260,7 @@ impl crate::benchmarking::Config<()> for TestRuntime {
 			REGULAR_PAYLOAD.declared_weight * params.message_nonces.saturating_len();
 		(
 			*prepare_messages_proof(
-				params.message_nonces.into_iter().map(|n| message(n, REGULAR_PAYLOAD)).collect(),
+				params.message_nonces.map(|n| message(n, REGULAR_PAYLOAD)).collect(),
 				params.outbound_lane_data,
 			),
 			dispatch_weight,

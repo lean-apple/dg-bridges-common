@@ -56,7 +56,7 @@ sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "mas
 
 [dev-dependencies]
 bp-test-utils = { path = "../../primitives/test-utils" }
-hex-literal = "0.4"
+hex-literal = "0.4.1"
 sp-keyring = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
 tempfile = "3.8"
 finality-grandpa = { version = "0.16.2" }

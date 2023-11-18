@@ -33,7 +33,6 @@ use sp_runtime::{MultiAddress, MultiSigner, RuntimeDebug, StateVersion};
 pub struct BridgeHubRococo;
 
 impl Chain for BridgeHubRococo {
-	const ID: ChainId = *b"bhro";
 
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;

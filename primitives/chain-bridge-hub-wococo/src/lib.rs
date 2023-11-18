@@ -33,7 +33,6 @@ use sp_runtime::{RuntimeDebug, StateVersion};
 pub struct BridgeHubWococo;
 
 impl Chain for BridgeHubWococo {
-	const ID: ChainId = *b"bhwo";
 
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;

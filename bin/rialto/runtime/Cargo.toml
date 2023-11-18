@@ -7,7 +7,7 @@ repository = "https://github.com/paritytech/parity-bridges-common/"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "3.1.5", default-features = false, features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "3.6.5", default-features = false, features = ["derive"]}
 scale-info = { version = "2.10.0", default-features = false, features = ["derive"] }
 
 # Bridge dependencies
@@ -71,16 +71,16 @@ xcm-executor = { package = "staging-xcm-executor", git = "https://github.com/par
 [dev-dependencies]
 bridge-runtime-common = { path = "../../runtime-common", features = ["integrity-test"] }
 env_logger = "0.10"
-hex-literal = "0.4"
+hex-literal = "0.4.1"
 static_assertions = "1.1"
 
 [build-dependencies]
-substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 
 [features]
-default = ["std"]
+default = [ "std" ]
 std = [
-	"sp-consensus-beefy/std",
+	"bp-header-chain/std",
 	"bp-messages/std",
 	"bp-millau/std",
 	"bp-relayers/std",
@@ -96,8 +96,8 @@ std = [
 	"pallet-authority-discovery/std",
 	"pallet-babe/std",
 	"pallet-balances/std",
-	"pallet-beefy/std",
 	"pallet-beefy-mmr/std",
+	"pallet-beefy/std",
 	"pallet-bridge-beefy/std",
 	"pallet-bridge-grandpa/std",
 	"pallet-bridge-messages/std",
@@ -119,18 +119,18 @@ std = [
 	"sp-authority-discovery/std",
 	"sp-block-builder/std",
 	"sp-consensus-babe/std",
+	"sp-consensus-beefy/std",
 	"sp-core/std",
 	"sp-inherents/std",
-	"sp-io/std",
 	"sp-offchain/std",
 	"sp-runtime/std",
 	"sp-session/std",
 	"sp-std/std",
 	"sp-transaction-pool/std",
 	"sp-version/std",
-	"xcm/std",
 	"xcm-builder/std",
 	"xcm-executor/std",
+	"xcm/std",
 ]
 runtime-benchmarks = [
 	"bridge-runtime-common/runtime-benchmarks",
@@ -138,6 +138,7 @@ runtime-benchmarks = [
 	"frame-support/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
 	"pallet-bridge-messages/runtime-benchmarks",
+	"pallet-grandpa/runtime-benchmarks",
 	"pallet-message-queue/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 	"xcm-builder/runtime-benchmarks",

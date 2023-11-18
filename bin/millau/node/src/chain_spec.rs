@@ -96,6 +96,7 @@ impl Alternative {
 			.clone(),
 		);
 		match self {
+			// TODO: remove this - outdated 
 			Alternative::Development => ChainSpec::from_genesis(
 				"Millau Development",
 				"millau_dev",
@@ -117,7 +118,9 @@ impl Alternative {
 				None,
 				properties,
 				None,
+				&[0, 1, 2, 4, 5, 6]  // TODO: check how to set it correctly 
 			),
+			// TODO: remove this - outdated 
 			Alternative::LocalTestnet => ChainSpec::from_genesis(
 				"Millau Local",
 				"millau_local",
@@ -139,6 +142,7 @@ impl Alternative {
 				None,
 				properties,
 				None,
+				&[0, 1, 2, 4, 5, 6] // TODO: check how to set it correctly 
 			),
 		}
 	}
@@ -198,7 +202,7 @@ fn testnet_genesis(
 ) -> RuntimeGenesisConfig {
 	RuntimeGenesisConfig {
 		system: SystemConfig {
-			code: WASM_BINARY.expect("Millau development WASM not available").to_vec(),
+			// code: WASM_BINARY.expect("Millau development WASM not available").to_vec(),
 			..Default::default()
 		},
 		balances: BalancesConfig {

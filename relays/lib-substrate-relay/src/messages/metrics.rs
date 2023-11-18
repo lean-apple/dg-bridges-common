@@ -89,7 +89,9 @@ where
 					bp_relayers::RelayerRewardsKeyProvider::<AccountIdOf<C>, BalanceOf<C>>::final_key(
 						relayers_pallet_name,
 						account.id(),
-						&RewardsAccountParams::new(*lane, BC::ID, RewardsAccountOwner::ThisChain),
+						&RewardsAccountParams::new(*lane, <C::Runtime as MessagesConfig<
+							<C::Msgs as RefundableMessagesLaneId>::Instance,
+						>>::BridgedChainId::get(), RewardsAccountOwner::ThisChain),
 					),
 					format!("at_{}_relay_{}_reward_for_msgs_from_{}_on_lane_{}", C::NAME, account.tag(), BC::NAME, hex::encode(lane.as_ref())),
 					format!("Reward of the {} relay account at {} for delivering messages from {} on lane {:?}", account.tag(), C::NAME, BC::NAME, lane),

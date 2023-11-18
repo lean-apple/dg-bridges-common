@@ -53,7 +53,7 @@ impl Chain for Datagen {
 		bp_datagen::BEST_FINALIZED_DATAGEN_HEADER_METHOD;
 	const AVERAGE_BLOCK_INTERVAL: Duration = Duration::from_secs(5);
 
-	type SignedBlock = datagen_runtime::SignedBlock;
+	type SignedBlock = relay_substrate_client::Chain::SignedBlock;
 	type Call = datagen_runtime::RuntimeCall;
 }
 
@@ -91,7 +91,7 @@ impl ChainWithTransactions for Datagen {
 				frame_system::CheckWeight::<datagen_runtime::Runtime>::new(),
 				pallet_transaction_payment::ChargeTransactionPayment::<datagen_runtime::Runtime>::from(unsigned.tip),
 				datagen_runtime::BridgeRejectObsoleteHeadersAndMessages,
-				datagen_runtime::BridgeRefundDatagenParachainMessages::default(),
+				// datagen_runtime::BridgeRefundDatagenParachainMessages::default(),
 			),
 			(
 				(),
@@ -103,7 +103,6 @@ impl ChainWithTransactions for Datagen {
 				(),
 				(),
 				(),
-				()
 			),
 		);
 		let signature = raw_payload.using_encoded(|payload| param.signer.sign(payload));

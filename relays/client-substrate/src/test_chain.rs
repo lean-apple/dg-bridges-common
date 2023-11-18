@@ -22,7 +22,6 @@
 #![cfg(any(feature = "test-helpers", test))]
 
 use crate::{Chain, ChainWithBalances};
-use bp_runtime::ChainId;
 use frame_support::weights::Weight;
 use sp_runtime::StateVersion;
 use std::time::Duration;
@@ -32,8 +31,6 @@ use std::time::Duration;
 pub struct TestChain;
 
 impl bp_runtime::Chain for TestChain {
-	const ID: ChainId = *b"test";
-
 	type BlockNumber = u32;
 	type Hash = sp_core::H256;
 	type Hasher = sp_runtime::traits::BlakeTwo256;
@@ -77,8 +74,6 @@ impl ChainWithBalances for TestChain {
 pub struct TestParachainBase;
 
 impl bp_runtime::Chain for TestParachainBase {
-	const ID: ChainId = *b"tstp";
-
 	type BlockNumber = u32;
 	type Hash = sp_core::H256;
 	type Hasher = sp_runtime::traits::BlakeTwo256;

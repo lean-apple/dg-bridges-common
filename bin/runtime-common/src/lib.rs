@@ -145,56 +145,6 @@ macro_rules! generate_bridge_reject_obsolete_headers_and_messages {
 		}
 	};
 }
-/// A mapping over `NetworkId`.
-/// Since `NetworkId` doesn't include `Millau`, `Rialto` and `RialtoParachain`, we create some
-/// synthetic associations between these chains and `NetworkId` chains.
-pub enum CustomNetworkId {
-	/// The Millau network ID, associated with Kusama.
-	Millau,
-	/// The Rialto network ID, associated with Polkadot.
-	Rialto,
-	/// The RialtoParachain network ID, associated with Westend.
-	RialtoParachain,
-
-	Datagen,
-
-	DatagenParachain,
-}
-
-impl TryFrom<bp_runtime::ChainId> for CustomNetworkId {
-	type Error = ();
-
-	fn try_from(chain: bp_runtime::ChainId) -> Result<Self, Self::Error> {
-		// TODO: this code needs to be removed or fixed (use constants) in the
-		// https://github.com/paritytech/parity-bridges-common/issues/2068
-		if chain == *b"mlau" {
-			Ok(Self::Millau)
-		} else if chain == *b"rlto" {
-			Ok(Self::Rialto)
-		} else if chain == *b"rlpa" {
-			Ok(Self::RialtoParachain)
-		} else if chain == <bp_datagen::Datagen as bp_runtime::Chain>::ID {
-			Ok(Self::Datagen)
-		} else if chain == <bp_datagen_parachain::DatagenParachain as bp_runtime::Chain>::ID {
-			Ok(Self::DatagenParachain)
-		}else {
-			Err(())
-		}
-	}
-}
-
-impl CustomNetworkId {
-	/// Converts self to XCM' network id.
-	pub const fn as_network_id(&self) -> NetworkId {
-		match *self {
-			CustomNetworkId::Millau => NetworkId::Kusama,
-			CustomNetworkId::Rialto => NetworkId::Polkadot,
-			CustomNetworkId::RialtoParachain => NetworkId::Westend,
-			CustomNetworkId::Datagen => NetworkId::Kusama,
-			CustomNetworkId::DatagenParachain => NetworkId::Westend,
-		}
-	}
-}
 
 #[cfg(test)]
 mod tests {

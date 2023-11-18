@@ -22,7 +22,7 @@
 pub use bp_polkadot_core::*;
 
 use bp_header_chain::ChainWithGrandpa;
-use bp_runtime::{decl_bridge_finality_runtime_apis, Chain, ChainId};
+use bp_runtime::{decl_bridge_finality_runtime_apis, Chain};
 use frame_support::weights::Weight;
 use sp_runtime::StateVersion;
 
@@ -30,7 +30,6 @@ use sp_runtime::StateVersion;
 pub struct Rococo;
 
 impl Chain for Rococo {
-	const ID: ChainId = *b"roco";
 
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;

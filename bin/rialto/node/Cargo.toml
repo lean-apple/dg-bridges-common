@@ -43,10 +43,27 @@ polkadot-service = { git = "https://github.com/paritytech/polkadot-sdk", branch 
 [build-dependencies]
 substrate-build-script-utils = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
 frame-benchmarking-cli = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 
 [features]
 default = []
+std = [
+	"bp-messages/std",
+	"bridge-runtime-common/std",
+	"frame-benchmarking/std",
+	"frame-support/std",
+	"polkadot-primitives/std",
+	"polkadot-runtime-parachains/std",
+	"sc-executor/std",
+	"sp-authority-discovery/std",
+	"sp-consensus-babe/std",
+	"sp-consensus-beefy/std",
+	"sp-consensus-grandpa/std",
+	"sp-core/std",
+	"sp-runtime/std",
+]
 runtime-benchmarks = [
 	"polkadot-service/runtime-benchmarks",
 	"rialto-runtime/runtime-benchmarks",
+	"sp-runtime/runtime-benchmarks",
 ]

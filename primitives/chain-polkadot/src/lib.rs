@@ -32,7 +32,6 @@ use sp_runtime::StateVersion;
 pub struct Polkadot;
 
 impl Chain for Polkadot {
-	const ID: ChainId = *b"pdot";
 
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;

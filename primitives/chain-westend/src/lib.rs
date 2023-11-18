@@ -30,8 +30,6 @@ use frame_support::weights::Weight;
 pub struct Westend;
 
 impl Chain for Westend {
-	const ID: ChainId = *b"wend";
-
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hasher = Hasher;
@@ -69,8 +67,6 @@ pub struct AssetHubWestend;
 // AssetHubWestend seems to use the same configuration as all Polkadot-like chains, so we'll use
 // Westend primitives here.
 impl Chain for AssetHubWestend {
-	const ID: ChainId = *b"ahwe";
-
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hasher = Hasher;

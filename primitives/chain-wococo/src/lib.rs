@@ -33,8 +33,6 @@ use sp_runtime::StateVersion;
 pub struct Wococo;
 
 impl Chain for Wococo {
-	const ID: ChainId = *b"woco";
-
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hasher = Hasher;

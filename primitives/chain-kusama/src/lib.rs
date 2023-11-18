@@ -30,7 +30,6 @@ use sp_runtime::StateVersion;
 pub struct Kusama;
 
 impl Chain for Kusama {
-	const ID: ChainId = *b"ksma";
 
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;

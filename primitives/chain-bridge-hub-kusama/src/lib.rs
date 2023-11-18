@@ -36,7 +36,6 @@ use sp_runtime::{RuntimeDebug, StateVersion};
 pub struct BridgeHubKusama;
 
 impl Chain for BridgeHubKusama {
-	const ID: ChainId = *b"bhks";
 
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;

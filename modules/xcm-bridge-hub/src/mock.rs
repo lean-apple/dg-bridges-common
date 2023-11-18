@@ -305,8 +305,6 @@ impl DispatchBlob for TestBlobDispatcher {
 pub struct ThisChain;
 
 impl Chain for ThisChain {
-	const ID: ChainId = *b"ttch";
-
 	type BlockNumber = u64;
 	type Hash = H256;
 	type Hasher = BlakeTwo256;
@@ -338,8 +336,6 @@ pub type BridgedHeaderHash = H256;
 pub type BridgedChainHeader = SubstrateHeader;
 
 impl Chain for BridgedChain {
-	const ID: ChainId = *b"tbch";
-
 	type BlockNumber = u64;
 	type Hash = BridgedHeaderHash;
 	type Hasher = BlakeTwo256;

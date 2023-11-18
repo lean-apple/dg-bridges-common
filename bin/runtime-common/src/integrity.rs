@@ -21,7 +21,6 @@
 
 use bp_header_chain::ChainWithGrandpa;
 use bp_messages::{ChainWithMessages, InboundLaneData, MessageNonce};
-use bp_runtime::Chain;
 use codec::Encode;
 use frame_support::{storage::generator::StorageValue, traits::Get, weights::Weight};
 use frame_system::limits;
@@ -65,7 +64,7 @@ macro_rules! assert_bridge_messages_pallet_types(
 			// and relays will stop functioning)
 			use bp_messages::ChainWithMessages;
 			use bp_runtime::Chain;
-			use bp_xcm_bridge_hub::XcmAsPlainPayload;
+			use bridge_runtime_common::messages_xcm_extension::XcmAsPlainPayload;
 			use pallet_bridge_messages::Config as MessagesConfig;
 			use static_assertions::assert_type_eq_all;
 
@@ -168,11 +167,10 @@ where
 	assert!(
 		pallet_bridge_messages::BridgedChainOf::<R, MI>::MAX_UNREWARDED_RELAYERS_IN_CONFIRMATION_TX
 			<= pallet_bridge_messages::BridgedChainOf::<R, MI>::MAX_UNCONFIRMED_MESSAGES_IN_CONFIRMATION_TX,
-		"MAX_UNREWARDED_RELAYERS_IN_CONFIRMATION_TX ({}) of {:?} is larger than \
+		"MAX_UNREWARDED_RELAYERS_IN_CONFIRMATION_TX ({}) is larger than \
 			its MAX_UNCONFIRMED_MESSAGES_IN_CONFIRMATION_TX ({}). This makes \
 			no sense",
 		pallet_bridge_messages::BridgedChainOf::<R, MI>::MAX_UNREWARDED_RELAYERS_IN_CONFIRMATION_TX,
-		pallet_bridge_messages::BridgedChainOf::<R, MI>::ID,
 		pallet_bridge_messages::BridgedChainOf::<R, MI>::MAX_UNCONFIRMED_MESSAGES_IN_CONFIRMATION_TX,
 	);
 }

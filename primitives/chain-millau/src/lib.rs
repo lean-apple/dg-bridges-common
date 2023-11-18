@@ -161,8 +161,6 @@ pub type WeightToFee = IdentityFee<Balance>;
 pub struct Millau;
 
 impl Chain for Millau {
-	const ID: ChainId = *b"mlau";
-
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hasher = Hasher;

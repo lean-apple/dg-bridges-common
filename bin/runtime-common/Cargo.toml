@@ -8,7 +8,7 @@ repository.workspace = true
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "3.1.5", default-features = false, features = ["derive"] }
+codec = { package = 'parity-scale-codec', version = '3.6.5', default-features = false, features = ['derive']}
 hash-db = { version = "0.16.0", default-features = false }
 log = { version = "0.4.20", default-features = false }
 scale-info = { version = "2.10.0", default-features = false, features = ["derive"] }
@@ -25,6 +25,7 @@ bp-polkadot-core = { path = "../../primitives/polkadot-core", default-features =
 bp-relayers = { path = "../../primitives/relayers", default-features = false }
 bp-runtime = { path = "../../primitives/runtime", default-features = false }
 bp-xcm-bridge-hub = { path = "../../primitives/xcm-bridge-hub", default-features = false }
+bp-xcm-bridge-hub-router = { path = "../../primitives/xcm-bridge-hub-router", default-features = false }
 pallet-bridge-grandpa = { path = "../../modules/grandpa", default-features = false }
 pallet-bridge-messages = { path = "../../modules/messages", default-features = false }
 pallet-bridge-parachains = { path = "../../modules/parachains", default-features = false }
@@ -55,8 +56,8 @@ pallet-bridge-messages = { path = "../../modules/messages", features = ["std", "
 [features]
 default = [ "std" ]
 std = [
-	"bp-datagen/std",
 	"bp-datagen-parachain/std",
+	"bp-datagen/std",
 	"bp-header-chain/std",
 	"bp-messages/std",
 	"bp-parachains/std",
@@ -64,6 +65,7 @@ std = [
 	"bp-relayers/std",
 	"bp-runtime/std",
 	"bp-xcm-bridge-hub/std",
+	"bp-xcm-bridge-hub-router/std",
 	"codec/std",
 	"frame-support/std",
 	"frame-system/std",

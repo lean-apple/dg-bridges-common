@@ -22,7 +22,8 @@
 use crate::messages_call_ext::{
 	CallHelper as MessagesCallHelper, CallInfo as MessagesCallInfo, MessagesCallSubType,
 };
-use bp_messages::{LaneId, LaneState, MessageNonce};
+use bp_header_chain::SubmitFinalityProofInfo;
+use bp_messages::{LaneId, MessageNonce};
 use bp_parachains::{RelayBlockNumber, SubmitParachainHeadsInfo};
 use bp_relayers::{RewardsAccountOwner, RewardsAccountParams};
 use bp_runtime::{Chain, Parachain, ParachainIdOf, RangeInclusiveExt, StaticStrProvider};
@@ -34,9 +35,8 @@ use frame_support::{
 	CloneNoBound, DefaultNoBound, EqNoBound, PartialEqNoBound, RuntimeDebugNoBound,
 };
 use pallet_bridge_grandpa::{
-	CallSubType as GrandpaCallSubType, Config as GrandpaConfig, SubmitFinalityProofHelper
+	CallSubType as GrandpaCallSubType, Config as GrandpaConfig, SubmitFinalityProofHelper,
 };
-use bp_header_chain::SubmitFinalityProofInfo;
 use pallet_bridge_messages::Config as MessagesConfig;
 use pallet_bridge_parachains::{
 	BoundedBridgeGrandpaConfig, CallSubType as ParachainsCallSubType, Config as ParachainsConfig,
@@ -842,7 +842,7 @@ mod tests {
 	};
 	use bp_messages::{
 		source_chain::FromBridgedChainMessagesDeliveryProof,
-		target_chain::FromBridgedChainMessagesProof, DeliveredMessages, InboundLaneData,
+		target_chain::FromBridgedChainMessagesProof, DeliveredMessages, InboundLaneData, LaneState,
 		MessageNonce, MessagesOperatingMode, OutboundLaneData, UnrewardedRelayer,
 		UnrewardedRelayersState,
 	};
@@ -863,22 +863,22 @@ mod tests {
 		transaction_validity::{InvalidTransaction, ValidTransaction},
 		DispatchError,
 	};
-	/// Lane that we're using in tests.
-	pub const TEST_LANE_ID: LaneId = LaneId([0, 0, 0, 1]);
+
+	pub const PARACHAIN_ID :u32 =1; // TODO: to change
 
 	parameter_types! {
 		TestParachain: u32 = 1000;
-		pub TestLaneId: LaneId = TEST_LANE_ID;
 		pub MsgProofsRewardsAccount: RewardsAccountParams = RewardsAccountParams::new(
-			TEST_LANE_ID,
+			test_lane_id(),
 			TEST_BRIDGED_CHAIN_ID,
 			RewardsAccountOwner::ThisChain,
 		);
 		pub MsgDeliveryProofsRewardsAccount: RewardsAccountParams = RewardsAccountParams::new(
-			TEST_LANE_ID,
+			test_lane_id(),
 			TEST_BRIDGED_CHAIN_ID,
 			RewardsAccountOwner::BridgedChain,
 		);
+		pub TestLaneId: LaneId = test_lane_id();
 	}
 
 	bp_runtime::generate_static_str_provider!(TestExtension);
@@ -924,6 +924,10 @@ mod tests {
 
 	fn relayer_account_at_bridged_chain() -> BridgedChainAccountId {
 		0
+	}
+
+	fn test_lane_id() -> LaneId {
+		LaneId::new(1, 2)
 	}
 
 	fn initialize_environment(
@@ -1006,15 +1010,15 @@ mod tests {
 					test_lane_id(),
 				)
 				.unwrap()
-				.last_delivered_nonce() +
-					1,
+				.last_delivered_nonce()
+					+ 1,
 				nonces_end: best_message,
 			}),
 			messages_count: 1,
 			dispatch_weight: Weight::zero(),
 		})
 	}
-	
+
 	fn message_confirmation_call(best_message: MessageNonce) -> RuntimeCall {
 		RuntimeCall::BridgeMessages(MessagesCall::receive_messages_delivery_proof {
 			proof: FromBridgedChainMessagesDeliveryProof {
@@ -1121,7 +1125,7 @@ mod tests {
 				},
 				MessagesCallInfo::ReceiveMessagesProof(ReceiveMessagesProofInfo {
 					base: BaseMessagesProofInfo {
-						lane_id: TEST_LANE_ID,
+						lane_id: test_lane_id(),
 						bundled_range: 101..=200,
 						best_stored_nonce: 100,
 					},
@@ -1150,7 +1154,7 @@ mod tests {
 				},
 				MessagesCallInfo::ReceiveMessagesDeliveryProof(ReceiveMessagesDeliveryProofInfo(
 					BaseMessagesProofInfo {
-						lane_id: TEST_LANE_ID,
+						lane_id: test_lane_id(),
 						bundled_range: 101..=200,
 						best_stored_nonce: 100,
 					},
@@ -1170,7 +1174,7 @@ mod tests {
 				},
 				MessagesCallInfo::ReceiveMessagesProof(ReceiveMessagesProofInfo {
 					base: BaseMessagesProofInfo {
-						lane_id: TEST_LANE_ID,
+						lane_id: test_lane_id(),
 						bundled_range: 101..=200,
 						best_stored_nonce: 100,
 					},
@@ -1194,7 +1198,7 @@ mod tests {
 				},
 				MessagesCallInfo::ReceiveMessagesDeliveryProof(ReceiveMessagesDeliveryProofInfo(
 					BaseMessagesProofInfo {
-						lane_id: TEST_LANE_ID,
+						lane_id: test_lane_id(),
 						bundled_range: 101..=200,
 						best_stored_nonce: 100,
 					},
@@ -1214,7 +1218,7 @@ mod tests {
 				},
 				MessagesCallInfo::ReceiveMessagesProof(ReceiveMessagesProofInfo {
 					base: BaseMessagesProofInfo {
-						lane_id: TEST_LANE_ID,
+						lane_id: test_lane_id(),
 						bundled_range: 101..=200,
 						best_stored_nonce: 100,
 					},
@@ -1238,7 +1242,7 @@ mod tests {
 				},
 				MessagesCallInfo::ReceiveMessagesDeliveryProof(ReceiveMessagesDeliveryProofInfo(
 					BaseMessagesProofInfo {
-						lane_id: TEST_LANE_ID,
+						lane_id: test_lane_id(),
 						bundled_range: 101..=200,
 						best_stored_nonce: 100,
 					},
@@ -1253,7 +1257,7 @@ mod tests {
 			call_info: CallInfo::Msgs(MessagesCallInfo::ReceiveMessagesProof(
 				ReceiveMessagesProofInfo {
 					base: BaseMessagesProofInfo {
-						lane_id: TEST_LANE_ID,
+						lane_id: test_lane_id(),
 						bundled_range: 101..=200,
 						best_stored_nonce: 100,
 					},
@@ -1271,7 +1275,7 @@ mod tests {
 			relayer: relayer_account_at_this_chain(),
 			call_info: CallInfo::Msgs(MessagesCallInfo::ReceiveMessagesDeliveryProof(
 				ReceiveMessagesDeliveryProofInfo(BaseMessagesProofInfo {
-					lane_id: TEST_LANE_ID,
+					lane_id: test_lane_id(),
 					bundled_range: 101..=200,
 					best_stored_nonce: 100,
 				}),
@@ -1738,7 +1742,7 @@ mod tests {
 							(ParaId(TestParachain::get()), [1u8; 32].into()),
 							(ParaId(TestParachain::get() + 1), [1u8; 32].into()),
 						],
-						parachain_heads_proof: ParaHeadsProof(vec![]),
+						parachain_heads_proof: ParaHeadsProof { storage_proof: Default::default() },
 					}),
 					message_delivery_call(200),
 				],

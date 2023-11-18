@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::{ChainId, HeaderIdProvider};
+use crate::HeaderIdProvider;
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_support::{weights::Weight, Parameter};
 use num_traits::{AsPrimitive, Bounded, CheckedSub, Saturating, SaturatingAdd, Zero};
@@ -23,7 +23,7 @@ use sp_runtime::{
 		AtLeast32Bit, AtLeast32BitUnsigned, Hash as HashT, Header as HeaderT, MaybeDisplay,
 		MaybeSerialize, MaybeSerializeDeserialize, Member, SimpleBitOps, Verify,
 	},
-	FixedPointOperand, StateVersion,
+	FixedPointOperand, StateVersion
 };
 use sp_std::{convert::TryFrom, fmt::Debug, hash::Hash, str::FromStr, vec, vec::Vec};
 
@@ -91,9 +91,6 @@ impl<ChainCall: Encode> Encode for EncodedOrDecodedCall<ChainCall> {
 
 /// Minimal Substrate-based chain representation that may be used from no_std environment.
 pub trait Chain: Send + Sync + 'static {
-	/// Chain id.
-	const ID: ChainId;
-
 	/// A type that fulfills the abstract idea of what a Substrate block number is.
 	// Constraits come from the associated Number type of `sp_runtime::traits::Header`
 	// See here for more info:
@@ -207,8 +204,6 @@ impl<T> Chain for T
 where
 	T: Send + Sync + 'static + UnderlyingChainProvider,
 {
-	const ID: ChainId = <T::Chain as Chain>::ID;
-
 	type BlockNumber = <T::Chain as Chain>::BlockNumber;
 	type Hash = <T::Chain as Chain>::Hash;
 	type Hasher = <T::Chain as Chain>::Hasher;

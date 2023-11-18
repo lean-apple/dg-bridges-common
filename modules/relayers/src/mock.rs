@@ -88,8 +88,6 @@ pub const MAX_REWARD_PER_MESSAGE: ThisChainBalance = 100_000;
 pub struct ThisUnderlyingChain;
 
 impl Chain for ThisUnderlyingChain {
-	const ID: ChainId = *b"tuch";
-
 	type BlockNumber = ThisChainBlockNumber;
 	type Hash = ThisChainHash;
 	type Hasher = ThisChainHasher;
@@ -121,7 +119,6 @@ impl ChainWithMessages for ThisUnderlyingChain {
 pub struct BridgedUnderlyingChain;
 
 impl Chain for BridgedUnderlyingChain {
-	const ID: ChainId = TEST_BRIDGED_CHAIN_ID;
 
 	type BlockNumber = BridgedChainBlockNumber;
 	type Hash = BridgedChainHash;

@@ -137,6 +137,7 @@ pub fn development_config(id: ParaId) -> ChainSpec {
 			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
 			para_id: id.into(),
 		},
+		&vec![0, 1, 2, 4, 5, 6] // TODO: change
 	)
 }
 
@@ -146,6 +147,7 @@ pub fn local_testnet_config(id: ParaId) -> ChainSpec {
 	properties.insert("tokenSymbol".into(), "UNIT".into());
 	properties.insert("tokenDecimals".into(), 12.into());
 
+	// TODO: remove this - outdated  
 	ChainSpec::from_genesis(
 		// Name
 		"Local Testnet",
@@ -166,9 +168,10 @@ pub fn local_testnet_config(id: ParaId) -> ChainSpec {
 		None,
 		None,
 		Extensions {
-			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
+			relay_chain: "rococo-local".into(), // TODO: check it is set this to the correct network.
 			para_id: id.into(),
 		},
+		&[0, 1, 2, 4, 5, 6] // TODO: change
 	)
 }
 
@@ -180,9 +183,9 @@ fn testnet_genesis(
 ) -> rialto_parachain_runtime::RuntimeGenesisConfig {
 	rialto_parachain_runtime::RuntimeGenesisConfig {
 		system: rialto_parachain_runtime::SystemConfig {
-			code: rialto_parachain_runtime::WASM_BINARY
-				.expect("WASM binary was not build, please build it!")
-				.to_vec(),
+			// code: rialto_parachain_runtime::WASM_BINARY
+			// 	.expect("WASM binary was not build, please build it!")
+			// 	.to_vec(),
 			..Default::default()
 		},
 		balances: rialto_parachain_runtime::BalancesConfig {
