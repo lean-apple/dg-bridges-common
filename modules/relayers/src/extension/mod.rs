@@ -160,7 +160,11 @@ where
 		let reward_account_params = RewardsAccountParams::new(
 			lane_id,
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<R as BridgeMessagesConfig<C::BridgeMessagesPalletInstance>>::BridgedChainId::get(),
+=======
+			<R as BridgeMessagesConfig<C::BridgeMessagesPalletInstance>>::BridgedChain::ID,
+>>>>>>> 596378e4016949c44622f6e155db5e2c75955309
 =======
 			<R as BridgeMessagesConfig<C::BridgeMessagesPalletInstance>>::BridgedChain::ID,
 >>>>>>> 596378e4016949c44622f6e155db5e2c75955309

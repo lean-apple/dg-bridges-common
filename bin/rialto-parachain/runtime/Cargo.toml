@@ -10,11 +10,7 @@ license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
 
 [dependencies]
-<<<<<<< HEAD
 codec = { package = "parity-scale-codec", version = "3.6.5", default-features = false, features = ["derive"] }
-=======
-codec = { package = 'parity-scale-codec', version = '3.1.5', default-features = false, features = ['derive']}
->>>>>>> 596378e4016949c44622f6e155db5e2c75955309
 hex-literal = "0.4.1"
 scale-info = { version = "2.10.0", default-features = false, features = ["derive"] }
 
@@ -90,10 +86,7 @@ static_assertions = "1.1"
 [features]
 default = [ 'std' ]
 runtime-benchmarks = [
-<<<<<<< HEAD
 	'frame-benchmarking/runtime-benchmarks',
-=======
->>>>>>> 596378e4016949c44622f6e155db5e2c75955309
 	'frame-support/runtime-benchmarks',
 	'frame-system/runtime-benchmarks',
 	'pallet-balances/runtime-benchmarks',

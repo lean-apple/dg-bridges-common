@@ -43,11 +43,8 @@ polkadot-service = { git = "https://github.com/paritytech/polkadot-sdk", branch 
 [build-dependencies]
 substrate-build-script-utils = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
 frame-benchmarking-cli = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-<<<<<<< HEAD
-substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master", default-features = false }
-=======
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
->>>>>>> 596378e4016949c44622f6e155db5e2c75955309
+
 
 [features]
 default = []
