@@ -159,7 +159,11 @@ where
 		let lane_id = call_info.messages_call_info().lane_id();
 		let reward_account_params = RewardsAccountParams::new(
 			lane_id,
+<<<<<<< HEAD
 			<R as BridgeMessagesConfig<C::BridgeMessagesPalletInstance>>::BridgedChainId::get(),
+=======
+			<R as BridgeMessagesConfig<C::BridgeMessagesPalletInstance>>::BridgedChain::ID,
+>>>>>>> 596378e4016949c44622f6e155db5e2c75955309
 			if call_info.is_receive_messages_proof_call() {
 				RewardsAccountOwner::ThisChain
 			} else {

@@ -150,7 +150,11 @@ impl Alternative {
 					relay_chain: "rialto_local".into(),
 					para_id: id.into(),
 				},
+<<<<<<< HEAD
 				&[0, 1, 2, 4, 5, 6],
+=======
+				&vec![0, 1, 2, 4, 5, 6],
+>>>>>>> 596378e4016949c44622f6e155db5e2c75955309
 			),
 		}
 	}
