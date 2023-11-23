@@ -41,17 +41,17 @@ bp-messages = { path = "../../primitives/messages" }
 
 # Substrate Dependencies
 
-frame-support = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-frame-system = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-pallet-balances = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-pallet-grandpa = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-sp-consensus-grandpa = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+frame-support = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+frame-system = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+pallet-balances = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+pallet-grandpa = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+sp-consensus-grandpa = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
 
 [dev-dependencies]
 bp-rococo = { path = "../../primitives/chain-rococo" }
-pallet-transaction-payment = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+pallet-transaction-payment = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
 relay-bridge-hub-rococo-client = { path = "../client-bridge-hub-rococo" }
 relay-bridge-hub-westend-client = { path = "../client-bridge-hub-westend" }
 relay-rococo-client = { path = "../client-rococo" }

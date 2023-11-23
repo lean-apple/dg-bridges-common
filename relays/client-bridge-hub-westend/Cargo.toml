@@ -26,9 +26,9 @@ relay-substrate-client = { path = "../client-substrate" }
 
 # Substrate Dependencies
 
-sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
-sp-weights = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
+sp-weights = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
 
 [dev-dependencies]
-sp-consensus-grandpa = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-consensus-grandpa = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }

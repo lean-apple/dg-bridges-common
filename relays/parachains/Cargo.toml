@@ -16,8 +16,8 @@ relay-utils = { path = "../utils" }
 
 bp-polkadot-core = { path = "../../primitives/polkadot-core" }
 relay-substrate-client = { path = "../client-substrate" }
+codec = { package = "parity-scale-codec", version = "3.6.5", default-features = false, features = ["max-encoded-len"] }
 
 [dev-dependencies]
-codec = { package = "parity-scale-codec", version = "3.1.5" }
 relay-substrate-client = { path = "../client-substrate", features = ["test-helpers"] }
-sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "master" }
+sp-core = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.4.0" }
